@@ -25,7 +25,7 @@ interface Props {
  * @docs https://docs.compound.finance/interest-rates/#get-supply-rate
  * @returns
  */
-export async function getPosition({ chainName, account }: Props, { getProvider }: FunctionOptions): Promise<FunctionReturn> {
+export async function getAllPositionsOnChain({ chainName, account }: Props, { getProvider }: FunctionOptions): Promise<FunctionReturn> {
     // Check wallet connection
     if (!account) return toResult('Wallet not connected', true);
 
