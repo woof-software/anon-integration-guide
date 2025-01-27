@@ -2,10 +2,7 @@ import { Address } from 'viem';
 import { FunctionReturn, FunctionOptions, toResult, getChainFromName } from '@heyanon/sdk';
 import {
     getAllMarketsOnChain,
-    getMarketConfigByChainAndMarketAddress,
-    getMarketConfigByChainAndTokenAddress,
     MarketConfig,
-    SECONDS_PER_YEAR,
     supportedChains,
     SupprotedChainsType,
 } from '../constants';
@@ -18,12 +15,11 @@ interface Props {
 }
 
 /**
- *
+ * Get all positions on a specific chain for a user by all markets
  * @param param0 - chainName, account, token, where token name is USDT, USDC, etc. See enum {MarketBaseAssets}
  * @param param1 - tools
- * @description Get lend APR for token on specific networ for Compound protocol
  * @docs https://docs.compound.finance/interest-rates/#get-supply-rate
- * @returns
+ * @returns {Promise<FunctionReturn>} Result object containing success/error message
  */
 export async function getAllPositionsOnChain({ chainName, account }: Props, { getProvider }: FunctionOptions): Promise<FunctionReturn> {
     // Check wallet connection

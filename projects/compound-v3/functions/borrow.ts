@@ -10,6 +10,13 @@ interface Props {
     borrowAmount: string;
 }
 
+/**
+ * Borrows tokens from a Compound V3 market
+ * @param param0 - chainName - name of the chain, account - user's wallet address, tokenAddress - the address of the market's underlying token, borrowAmount - the amount of tokens to borrow
+ * @param param1 - SDK tools
+ * @docs https://docs.compound.finance/collateral-and-borrowing/#withdraw-or-borrow
+ * @returns {Promise<FunctionReturn>} Result object containing success/error message
+ */
 export async function borrow(
     { chainName, account, tokenAddress, borrowAmount }: Props,
     { getProvider, sendTransactions, notify }: FunctionOptions,

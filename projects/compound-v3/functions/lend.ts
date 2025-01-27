@@ -16,6 +16,7 @@ interface Props {
  * @param param1 - tools
  * @description Lend all supported asset by Compound
  * @docs https://docs.compound.finance/collateral-and-borrowing/#supply
+ * @returns {Promise<FunctionReturn>} Result object containing success/error message
  */
 export async function lend({ chainName, account, tokenAddress, lendAmount }: Props, { sendTransactions, notify, getProvider }: FunctionOptions): Promise<FunctionReturn> {
     // Check wallet connection

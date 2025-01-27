@@ -10,12 +10,11 @@ interface Props {
 }
 
 /**
- *
+ * Get lend APR for a token on a specific network for Compound protocol
  * @param param0 - chainName, account, token, where token name is USDT, USDC, etc. See enum {MarketBaseAssets}
  * @param param1 - tools
- * @description Get lend APR for token on specific networ for Compound protocol
  * @docs https://docs.compound.finance/interest-rates/#get-supply-rate
- * @returns
+ * @returns {Promise<FunctionReturn>} Result object containing success/error message
  */
 export async function getLendApr({ chainName, account, tokenAddress }: Props, { getProvider }: FunctionOptions): Promise<FunctionReturn> {
     // Check wallet connection

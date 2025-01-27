@@ -9,6 +9,13 @@ interface Props {
     tokenAddress: Address;
 }
 
+/**
+ * Get the amount of COMP rewards owed from a Compound V3 market
+ * @param param0 - chainName - name of the chain, account - user's wallet address, tokenAddress - the address of the market's underlying token
+ * @param param1 - SDK tools
+ * @docs https://docs.compound.finance/protocol-rewards/#get-reward-accrued
+ * @returns {Promise<FunctionReturn>} Result object containing success/error message
+ */
 export async function getOwedRewards(
     { chainName, account, tokenAddress }: Props,
     { getProvider }: FunctionOptions

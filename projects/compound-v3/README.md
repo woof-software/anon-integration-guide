@@ -7,9 +7,15 @@ Compound V3 Protocol is a Tier-1 decentrilized lending and borrowing protocols. 
 ### Main Features
 
 - Lend WETH, ETH, USDC, USDbC, USDC.e, USDT and AERO
+- Borrow WETH, ETH, USDC, USDbC, USDC.e, USDT and AERO
+- Claim rewards from the protocol
+- Lend collateral
+- Withdraw collateral from the protocol
 - Query current lending and borrowing APRs
 - Get lend position on chain on specific market
 - Get all lend positions on chain
+- Get claimed and owed rewards
+
 
 ## Supported Networks
 
@@ -38,6 +44,29 @@ Compound V3 Protocol is a Tier-1 decentrilized lending and borrowing protocols. 
     - "Get lend position for USDT on Ethereum in @compound-v3"
     - "Show all lend position on Arbitrum in @compound-v3"
 
+4. Borrow Operations
+
+    - "Borrow 1000 USDT on Ethereum in @compound-v3"
+    - "Take 500 USDC on Arbitrum in @compound-v3"
+    - "Borrow 1000 USDC on Base in @compound-v3"
+
+5. Claim Rewards
+
+    - "Claim rewards from @compound-v3 on Ethereum"
+    - "Claim rewards from @compound-v3 on Arbitrum"
+    - "Claim rewards from @compound-v3 on Base"
+
+6. Withdraw Collateral
+
+    - "Withdraw 1000 USDT on Ethereum in @compound-v3"
+    - "Withdraw 500 USDC on Arbitrum in @compound-v3"
+    - "Withdraw 1000 USDC on Base in @compound-v3"
+
+7. Get Claimed and Owed Rewards
+
+    - "Get claimed rewards amount from @compound-v3 on Ethereum"
+    - "Get owed rewards amount from @compound-v3 on Arbitrum"
+
 ## Pain Points Solved
 
 1. **Handle all lending flows**
@@ -55,6 +84,15 @@ Compound V3 Protocol is a Tier-1 decentrilized lending and borrowing protocols. 
 3. **Position managment**
     - Receive lend position for specific market
     - Receive lend positions for specific market
+
+4. **Rewards managment**
+    - Claim rewards from the protocol
+    - Get claimed rewards amount
+    - Get owed rewards amount
+
+5. **Collateral managment**
+    - Lend collateral
+    - Withdraw collateral
 
 ## Installation
 

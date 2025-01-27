@@ -11,6 +11,13 @@ interface Props {
     lendAmount: string;
 }
 
+/**
+ * Lends collateral to a Compound V3 market
+ * @param param0 - chainName - name of the chain, account - user's wallet address, tokenAddress - the address of the market's underlying token, marketAddress - the address of the market, lendAmount - the amount of collateral to lend
+ * @param param1 - SDK tools
+ * @docs https://docs.compound.finance/collateral-and-borrowing/#supply
+ * @returns {Promise<FunctionReturn>} Result object containing success/error message
+ */
 export async function lendCollateral(
     { chainName, account, tokenAddress, marketAddress, lendAmount }: Props,
     { getProvider, sendTransactions, notify }: FunctionOptions,

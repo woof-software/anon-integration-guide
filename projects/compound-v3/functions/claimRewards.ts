@@ -1,5 +1,5 @@
-import { Address } from 'viem';
-import { FunctionReturn, FunctionOptions, toResult, getChainFromName } from '@heyanon/sdk';
+import { Address, encodeFunctionData } from 'viem';
+import { FunctionReturn, FunctionOptions, toResult, getChainFromName, TransactionParams } from '@heyanon/sdk';
 import { getMarketConfigByChainAndTokenAddress, supportedChains, SupprotedChainsType } from '../constants';
 import { rewardsAbi } from '../abis';
 
@@ -9,9 +9,16 @@ interface Props {
     tokenAddress: Address;
 }
 
-export async function getClaimedRewards(
+/**
+ * Claims available COMP rewards from a Compound V3 market
+ * @param param0 - chainName - name of the chain, account - user's wallet address, tokenAddress - the address of the market's underlying token
+ * @param param1 - SDK tools
+ * @docs https://docs.compound.finance/protocol-rewards/#claim-rewards
+ * @returns {Promise<FunctionReturn>} Result object containing success/error message
+ */
+export async function claimRewards(
     { chainName, account, tokenAddress }: Props,
-    { getProvider }: FunctionOptions
+    { getProvider, notify, sendTransactions }: FunctionOptions
 ): Promise<FunctionReturn> {
     // Check wallet connection
     if (!account) return toResult('Wallet not connected', true);
@@ -47,8 +54,24 @@ export async function getClaimedRewards(
         if (rewardOwed[0]?.result?.owed === 0n) {
             return toResult(`No rewards to claim from ${cometName}`);
         }
+        const tx: TransactionParams = {
+            target: rewardsAddress,
+            data: encodeFunctionData({
+                abi: rewardsAbi,
+                functionName: 'claim',
+                args: [cometAddress, account, true],
+            }),
+        };
 
-        return toResult(`Owed ${rewardOwed[0]?.result?.owed} rewards from ${cometName}`);
+        await notify('Waiting for transaction confirmation...');
+        const result = await sendTransactions({ chainId, account, transactions: [tx] });
+        const claimMessage = result.data[result.data.length - 1];
+
+        return toResult(
+            result.isMultisig
+                ? claimMessage.message
+                : `Successfully claimed ${rewardOwed.toString()} rewards from ${cometName}. ${claimMessage.message}`
+        );
     } catch (error) {
         return toResult(`Failed to claim rewards from ${cometName}`, true);
     }

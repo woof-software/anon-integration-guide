@@ -10,12 +10,12 @@ interface Props {
 }
 
 /**
- *
+ * Get amount of tokens in a user's position on a Compound V3 market
  * @param param0 - chainName, account, token, where token name is USDT, USDC, etc. See enum {MarketBaseAssets}
  * @param param1 - tools
  * @description Get lend APR for token on specific networ for Compound protocol
  * @docs https://docs.compound.finance/interest-rates/#get-supply-rate
- * @returns
+ * @returns {Promise<FunctionReturn>} Result object containing success/error message
  */
 export async function getPosition({ chainName, account, marketAddress }: Props, { getProvider }: FunctionOptions): Promise<FunctionReturn> {
     // Check wallet connection
