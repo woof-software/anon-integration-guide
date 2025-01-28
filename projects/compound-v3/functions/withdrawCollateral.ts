@@ -1,12 +1,9 @@
-import { Address, encodeFunctionData, erc20Abi, parseUnits } from 'viem';
-import { FunctionReturn, FunctionOptions, TransactionParams, toResult, getChainFromName, checkToApprove } from '@heyanon/sdk';
-import { getMarketConfigByChainAndTokenAddress, isNativeToken, nativeTokensAddress, supportedChains, SupprotedChainsType } from '../constants';
+import { encodeFunctionData, parseUnits } from 'viem';
+import { FunctionReturn, FunctionOptions, TransactionParams, toResult } from '@heyanon/sdk';
+import { BaseProps, isNativeToken, nativeTokensAddress, validateInputAndGetData } from '../constants';
 import { cometAbi, wethAbi } from '../abis';
 
-interface Props {
-    chainName: string;
-    account: Address;
-    tokenAddress: Address;
+interface Props extends BaseProps {
     withdrawAmount: string;
 }
 
@@ -21,17 +18,10 @@ export async function withdrawCollateral(
     { chainName, account, tokenAddress, withdrawAmount }: Props,
     { sendTransactions, notify, getProvider }: FunctionOptions
 ): Promise<FunctionReturn> {
-    // Check wallet connection
-    if (!account) return toResult('Wallet not connected', true);
+    const result = validateInputAndGetData({ chainName, account, tokenAddress });
+    if (!result.success) return toResult(result.error, true);
 
-    // Validate chain
-    const chainId = getChainFromName(chainName) as SupprotedChainsType;
-    if (!chainId) return toResult(`Unsupported chain name: ${chainName}`, true);
-    if (!supportedChains.includes(chainId)) return toResult(`Protocol is not supported on ${chainName}`, true);
-
-    // Get market config for chain and token
-    const marketConfig = getMarketConfigByChainAndTokenAddress(chainId, tokenAddress);
-    if (!marketConfig) return toResult(`Market ${tokenAddress} not found`, true);
+    const { marketConfig, chainId } = result;  
 
     const cometAddress = marketConfig.cometAddress;
     const cometName = marketConfig.name;

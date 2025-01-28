@@ -1,12 +1,9 @@
 import { Address, encodeFunctionData, parseUnits } from 'viem';
 import { FunctionReturn, FunctionOptions, TransactionParams, toResult, getChainFromName } from '@heyanon/sdk';
-import { getMarketConfigByChainAndTokenAddress, supportedChains, SupprotedChainsType } from '../constants';
+import { BaseProps, getMarketConfigByChainAndTokenAddress, supportedChains, SupprotedChainsType, validateInputAndGetData } from '../constants';
 import { cometAbi, erc20Abi } from '../abis';
 
-interface Props {
-    chainName: string;
-    account: Address;
-    tokenAddress: Address;
+interface Props extends BaseProps {
     borrowAmount: string;
 }
 
@@ -21,17 +18,10 @@ export async function borrow(
     { chainName, account, tokenAddress, borrowAmount }: Props,
     { getProvider, sendTransactions, notify }: FunctionOptions,
 ): Promise<FunctionReturn> {
-    // Check wallet connection
-    if (!account) return toResult('Wallet not connected', true);
+    const result = validateInputAndGetData({ chainName, account, tokenAddress });
+    if (!result.success) return toResult(result.error, true);
 
-    // Validate chain
-    const chainId = getChainFromName(chainName) as SupprotedChainsType;
-    if (!chainId) return toResult(`Unsupported chain name: ${chainName}`, true);
-    if (!supportedChains.includes(chainId)) return toResult(`Protocol is not supported on ${chainName}`, true);
-
-    // Get market config for chain and token
-    const marketConfig = getMarketConfigByChainAndTokenAddress(chainId, tokenAddress);
-    if (!marketConfig) return toResult(`Market ${tokenAddress} not found`, true);
+    const { marketConfig, chainId } = result;
 
     const cometAddress = marketConfig.cometAddress;
     const cometName = marketConfig.name;

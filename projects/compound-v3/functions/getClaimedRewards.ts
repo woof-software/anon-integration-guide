@@ -1,13 +1,8 @@
-import { Address } from 'viem';
-import { FunctionReturn, FunctionOptions, toResult, getChainFromName } from '@heyanon/sdk';
-import { getMarketConfigByChainAndTokenAddress, supportedChains, SupprotedChainsType } from '../constants';
+import { FunctionReturn, FunctionOptions, toResult } from '@heyanon/sdk';
+import { BaseProps, validateInputAndGetData } from '../constants';
 import { rewardsAbi } from '../abis';
 
-interface Props {
-    chainName: string;
-    account: Address;
-    tokenAddress: Address;
-}
+interface Props extends BaseProps {}
 
 /**
  * Get the amount of COMP rewards claimed from a Compound V3 market
@@ -20,17 +15,10 @@ export async function getClaimedRewards(
     { chainName, account, tokenAddress }: Props,
     { getProvider }: FunctionOptions
 ): Promise<FunctionReturn> {
-    // Check wallet connection
-    if (!account) return toResult('Wallet not connected', true);
+    const result = validateInputAndGetData({ chainName, account, tokenAddress });
+    if (!result.success) return toResult(result.error, true);
 
-    // Validate chain
-    const chainId = getChainFromName(chainName) as SupprotedChainsType;
-    if (!chainId) return toResult(`Unsupported chain name: ${chainName}`, true);
-    if (!supportedChains.includes(chainId)) return toResult(`Protocol is not supported on ${chainName}`, true);
-
-    // Get market config for chain and token
-    const marketConfig = getMarketConfigByChainAndTokenAddress(chainId, tokenAddress);
-    if (!marketConfig) return toResult(`Market ${tokenAddress} not found`, true);
+    const { marketConfig, chainId } = result;
 
     const rewardsAddress = marketConfig.rewardsAddress;
     const cometAddress = marketConfig.cometAddress;

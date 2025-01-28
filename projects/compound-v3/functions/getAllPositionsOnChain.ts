@@ -1,18 +1,14 @@
+import { FunctionReturn, FunctionOptions, toResult } from '@heyanon/sdk';
 import { Address } from 'viem';
-import { FunctionReturn, FunctionOptions, toResult, getChainFromName } from '@heyanon/sdk';
 import {
+    BaseProps,
     getAllMarketsOnChain,
     MarketConfig,
-    supportedChains,
-    SupprotedChainsType,
+    validateInputAndGetData,
 } from '../constants';
 import { cometAbi } from '../abis';
 
-interface Props {
-    chainName: string;
-    account: Address;
-    marketAddress: Address;
-}
+interface Props extends BaseProps {}
 
 /**
  * Get all positions on a specific chain for a user by all markets
@@ -22,13 +18,9 @@ interface Props {
  * @returns {Promise<FunctionReturn>} Result object containing success/error message
  */
 export async function getAllPositionsOnChain({ chainName, account }: Props, { getProvider }: FunctionOptions): Promise<FunctionReturn> {
-    // Check wallet connection
-    if (!account) return toResult('Wallet not connected', true);
-
-    // Validate chain
-    const chainId = getChainFromName(chainName) as SupprotedChainsType;
-    if (!chainId) return toResult('Unsupported chain name: {chainName}', true);
-    if (!supportedChains.includes(chainId)) return toResult('Protocol is not supported on \${chainName}', true);
+    const result = validateInputAndGetData({ chainName, account, tokenAddress: '' as Address });
+    if (!result.success) return toResult(result.error, true);
+    const { chainId } = result;
 
     // Get market config for chain and token
     const marketConfigs = getAllMarketsOnChain(chainId);

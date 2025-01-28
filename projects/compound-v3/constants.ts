@@ -1,4 +1,4 @@
-import { ChainId, NATIVE_ADDRESS, WETH9 } from '@heyanon/sdk';
+import { ChainId, getChainFromName, NATIVE_ADDRESS, WETH9 } from '@heyanon/sdk';
 import { Address } from 'viem';
 
 export const supportedChains = [ChainId.ETHEREUM, ChainId.ARBITRUM, ChainId.BASE];
@@ -185,4 +185,34 @@ export const isUsdtOnEthereum = (chainId: ChainId, tokenAddress: Address): boole
 
 export const getAllMarketsOnChain = (chainId: SupprotedChainsType): MarketConfig[] => {
     return MARKETS[chainId];
+};
+
+export interface BaseProps {
+    chainName: string;
+    account: Address;
+    tokenAddress: Address;
+}
+
+export const validateInputAndGetData = ({
+    account,
+    chainName,
+    tokenAddress,
+}: BaseProps): { success: true; marketConfig: MarketConfig; chainId: SupprotedChainsType } | { success: false; error: string } => {
+    // Check wallet connection
+    if (!account) return { success: false, error: 'Wallet not connected' };
+
+    // Validate chain
+    const chainId = getChainFromName(chainName) as SupprotedChainsType;
+    if (!chainId) return { success: false, error: `Unsupported chain name: ${chainName}` };
+    if (!supportedChains.includes(chainId)) return { success: false, error: `Protocol is not supported on ${chainName}` };
+
+    // Get market config for chain and token
+    const marketConfig = getMarketConfigByChainAndTokenAddress(chainId, tokenAddress);
+    if (!marketConfig) return { success: false, error: `Market ${tokenAddress} not found` };
+
+    return {
+        success: true,
+        marketConfig,
+        chainId,
+    };
 };
