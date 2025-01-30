@@ -159,6 +159,8 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
     ],
 };
 
+export const COLLATERAL_DECIMALS = 18;
+
 export const getMarketConfigByChainAndTokenAddress = (chainId: SupprotedChainsType, tokenAddress: Address): MarketConfig => {
     if (NATIVE_ADDRESS === tokenAddress) {
         return MARKETS[chainId].find((market) => market.baseAssetAddress === WETH9[chainId].address) as MarketConfig;

@@ -52,6 +52,27 @@ export const withdrawCollateralProps = [
     },
 ];
 
+export const repayWholeDeptProps = [
+    {
+        name: 'repayAssetAddress',
+        type: 'string',
+        description: 'Address of the asset to repay',
+    },
+];
+
+export const repayDeptProps = [
+    {
+        name: 'amountToRepay',
+        type: 'string',
+        description: 'Amount of tokens to repay in decimal format',
+    },
+    {
+        name: 'repayAssetAddress',
+        type: 'string',
+        description: 'Address of the asset to repay',
+    },
+];
+
 export const tools: AiTool[] = [
     {
         name: 'getLendApr',
@@ -118,5 +139,17 @@ export const tools: AiTool[] = [
         description: 'Withdraw collateral from the protocol',
         required: ['chainName', 'account', 'tokenAddress', 'withdrawAmount'],
         props: [...baseProps, ...withdrawCollateralProps],
+    },
+    {
+        name: 'repayDept',
+        description: 'Repay debt for any supported asset by Compound',
+        required: ['chainName', 'account', 'tokenAddress', 'repayAssetAddress', 'amountToRepay'],
+        props: [...baseProps, ...repayDeptProps],
+    },
+    {
+        name: 'repayWholeDept',
+        description: 'Repay all debt for any supported asset by Compound',
+        required: ['chainName', 'account', 'tokenAddress', 'repayAssetAddress'],
+        props: [...baseProps, ...repayWholeDeptProps],
     },
 ];

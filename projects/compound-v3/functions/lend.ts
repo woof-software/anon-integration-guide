@@ -8,10 +8,9 @@ interface Props extends BaseProps {
 }
 
 /**
- *
+ * Lend all supported asset by Compound
  * @param param0 - chainName, account, token, where token is {MarketBaseAssets} enum
  * @param param1 - tools
- * @description Lend all supported asset by Compound
  * @docs https://docs.compound.finance/collateral-and-borrowing/#supply
  * @returns {Promise<FunctionReturn>} Result object containing success/error message
  */
