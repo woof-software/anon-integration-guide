@@ -152,4 +152,10 @@ export const tools: AiTool[] = [
         required: ['chainName', 'account', 'tokenAddress', 'repayAssetAddress'],
         props: [...baseProps, ...repayWholeDeptProps],
     },
+    {
+        name: 'getDeptAmount',
+        description: 'Get the current debt amount for a user in a Compound market',
+        required: ['chainName', 'account', 'tokenAddress'],
+        props: [...baseProps],
+    },
 ];
