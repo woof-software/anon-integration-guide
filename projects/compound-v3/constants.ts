@@ -1,5 +1,6 @@
 import { ChainId, getChainFromName, NATIVE_ADDRESS, WETH9 } from '@heyanon/sdk';
-import { Address } from 'viem';
+import { Address, erc20Abi, PublicClient } from 'viem';
+import { cometAbi, priceFeedAbi } from './abis';
 
 export const supportedChains = [ChainId.ETHEREUM, ChainId.ARBITRUM, ChainId.BASE];
 export type SupprotedChainsType = ChainId.ETHEREUM | ChainId.ARBITRUM | ChainId.BASE;
@@ -7,6 +8,7 @@ export type SupprotedChainsType = ChainId.ETHEREUM | ChainId.ARBITRUM | ChainId.
 export const SECONDS_PER_YEAR = 60 * 60 * 24 * 365;
 
 export enum MarketBaseAssets {
+    'COMP' = 'COMP',
     'USDC' = 'USDC',
     'USDC.e' = 'USDC.e',
     'USDbC' = 'USDbC',
@@ -161,6 +163,31 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
 
 export const COLLATERAL_DECIMALS = 18;
 
+export const COMPOUND_TOKEN_DECIMALS = 18;
+
+export const PRICE_FEEDS = {
+    [ChainId.ETHEREUM]: {
+        [MarketBaseAssets.COMP]: '0xdbd020caef83efd542f4de03e3cf0c28a4428bd5',
+        [MarketBaseAssets.USDC]: '0x8fffffd4afb6115b954bd326cbe7b4ba576818f6',
+        [MarketBaseAssets.USDT]: '0x3e7d1eab13ad0104d2750b8863b489d65364e32d',
+        [MarketBaseAssets.USDS]: '0xff30586cd0f29ed462364c7e81375fc0c71219b1',
+        [MarketBaseAssets.WETH]: '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419',
+        [MarketBaseAssets.wstETH]: '0x023ee795361b28cdbb94e302983578486a0a5f1b',
+    },
+    [ChainId.ARBITRUM]: {
+        [MarketBaseAssets['USDC.e']]: '0x50834f3163758fcc1df9973b6e91f0f0f0434ad3',
+        [MarketBaseAssets.USDC]: '0x50834f3163758fcc1df9973b6e91f0f0f0434ad3',
+        [MarketBaseAssets.WETH]: '0x639fe6ab55c921f74e7fac1ee960c0b6293ba612',
+        [MarketBaseAssets.USDT]: '0x3f3f5df88dc9f13eac63df89ec16ef6e7e25dde7',
+    },
+    [ChainId.BASE]: {
+        [MarketBaseAssets.USDC]: '0x7e860098f58bbfc8648a4311b374b1d669a2bc6b',
+        [MarketBaseAssets.WETH]: '0x2c7118c4c88b9841fcf839074c26ae8f035f2921',
+        [MarketBaseAssets.AERO]: '0x4ec5970fc728c5f65ba413992cd5ff6fd70fcff0',
+        [MarketBaseAssets.USDbC]: '0x7e860098f58bbfc8648a4311b374b1d669a2bc6b',
+    },
+};
+
 export const getMarketConfigByChainAndTokenAddress = (chainId: SupprotedChainsType, tokenAddress: Address): MarketConfig => {
     if (NATIVE_ADDRESS === tokenAddress) {
         return MARKETS[chainId].find((market) => market.baseAssetAddress === WETH9[chainId].address) as MarketConfig;
@@ -216,5 +243,68 @@ export const validateInputAndGetData = ({
         success: true,
         marketConfig,
         chainId,
+    };
+};
+
+export const getTokenPrice = async (chainId: SupprotedChainsType, baseAsset: MarketBaseAssets, provider: PublicClient): Promise<bigint> => {
+    const decimals = await provider.readContract({
+        address: PRICE_FEEDS[chainId][baseAsset],
+        abi: priceFeedAbi,
+        functionName: 'decimals',
+    }) as bigint;
+    const latestRoundData = await provider.readContract({
+        address: PRICE_FEEDS[chainId][baseAsset],
+        abi: priceFeedAbi,
+        functionName: 'latestRoundData',
+    }) as [bigint, bigint, bigint, bigint, bigint, bigint];
+    return BigInt(latestRoundData[1]) / BigInt(10n ** BigInt(decimals));
+};
+
+export const getUserMarketInteractionsSum = async (account: Address, tokenAddress: Address, provider: PublicClient): Promise<{
+    collateralSupplySum: bigint;
+    collateralWithdrawSum: bigint;
+    supplySum: bigint;
+    withdrawSum: bigint;
+}> => {
+    const transferEvents = await provider.getContractEvents({
+        address: tokenAddress,
+        abi: erc20Abi,
+        eventName: 'Transfer',
+    });
+    const supplyCollateralEvents = await provider.getContractEvents({
+        address: tokenAddress,
+        abi: cometAbi,
+        eventName: 'SupplyCollateral',
+    });
+    const withdrawCollateralEvents = await provider.getContractEvents({
+        address: tokenAddress,
+        abi: cometAbi,
+        eventName: 'WithdrawCollateral',
+    });
+    const transferData = transferEvents.reduce((acc, event) => {
+        if (event.args.to?.toString() === account) {
+            acc.supplySum += event.args.value ?? 0n;
+        } else if (event.args.from?.toString() === account) {
+            acc.withdrawSum += event.args.value ?? 0n;
+        }
+        return acc;
+    }, { supplySum: 0n, withdrawSum: 0n });
+    const collateralSupplySum = supplyCollateralEvents.reduce((acc, event) => {
+        if (event.args.dst?.toString() === account) {
+            acc += event.args.amount ?? 0n;
+        }
+        return acc;
+    }, 0n);
+    const collateralWithdrawSum = withdrawCollateralEvents.reduce((acc, event) => {
+        if (event.args.src?.toString() === account) {
+            acc += event.args.amount ?? 0n;
+        }
+        return acc;
+    }, 0n);
+
+    return {
+        collateralSupplySum,
+        collateralWithdrawSum,
+        ...transferData,
     };
 };

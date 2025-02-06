@@ -158,4 +158,10 @@ export const tools: AiTool[] = [
         required: ['chainName', 'account', 'tokenAddress'],
         props: [...baseProps],
     },
+    {
+        name: 'getTotalEarn',
+        description: 'Get the total earnings for a user in a Compound market',
+        required: ['chainName', 'account', 'tokenAddress'],
+        props: [...baseProps],
+    },
 ];
