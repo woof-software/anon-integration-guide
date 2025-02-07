@@ -1,6 +1,6 @@
 import { ChainId, getChainFromName, NATIVE_ADDRESS, WETH9 } from '@heyanon/sdk';
-import { Address, erc20Abi, PublicClient } from 'viem';
-import { cometAbi, priceFeedAbi } from './abis';
+import { Address, PublicClient } from 'viem';
+import { priceFeedAbi } from './abis';
 
 export const supportedChains = [ChainId.ETHEREUM, ChainId.ARBITRUM, ChainId.BASE];
 export type SupprotedChainsType = ChainId.ETHEREUM | ChainId.ARBITRUM | ChainId.BASE;
@@ -8,7 +8,6 @@ export type SupprotedChainsType = ChainId.ETHEREUM | ChainId.ARBITRUM | ChainId.
 export const SECONDS_PER_YEAR = 60 * 60 * 24 * 365;
 
 export enum MarketBaseAssets {
-    'COMP' = 'COMP',
     'USDC' = 'USDC',
     'USDC.e' = 'USDC.e',
     'USDbC' = 'USDbC',
@@ -17,6 +16,33 @@ export enum MarketBaseAssets {
     'USDT' = 'USDT',
     'USDS' = 'USDS',
     'wstETH' = 'wstETH',
+}
+
+export enum Collaterals {
+    'WBTC' = 'WBTC',
+    'WETH' = 'WETH',
+    'UNI' = 'UNI',
+    'LINK' = 'LINK',
+    'wstETH' = 'wstETH',
+    'cbBTC' = 'cbBTC',
+    'tBTC' = 'tBTC',
+    'wUSDM' = 'wUSDM',
+    'sFRAX' = 'sFRAX',
+    'mETH' = 'mETH',
+    'USDe' = 'USDe',
+    'sUSDS' = 'sUSDS',
+    'cbETH' = 'cbETH',
+    'rETH' = 'rETH',
+    'rsETH' = 'rsETH',
+    'weETH' = 'weETH',
+    'osETH' = 'osETH',
+    'ezETH' = 'ezETH',
+    'rswETH' = 'rswETH',
+    'ETHx' = 'ETHx',
+    'ARB' = 'ARB',
+    'GMX' = 'GMX',
+    'USDT' = 'USDT',
+    'USDC' = 'USDC',
 }
 
 export const nativeTokensAddress: { [chain in SupprotedChainsType]: Address } = {
@@ -33,6 +59,12 @@ export type MarketConfig = {
     baseAsset: MarketBaseAssets;
     baseAssetAddress: Address;
     baseAssetDecimals: number;
+    collaterals: {
+        address: Address;
+        symbol: Collaterals;
+        decimals: number;
+        name: string;
+    }[];
 };
 
 export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
@@ -45,6 +77,50 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.USDC,
             baseAssetAddress: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
             baseAssetDecimals: 6,
+            collaterals: [
+                {
+                    address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+                    decimals: 8,
+                    name: 'Wrapped BTC',
+                    symbol: Collaterals.WBTC,
+                  },
+                  {
+                    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+                    decimals: 18,
+                    name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                  },
+                  {
+                    address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
+                    decimals: 18,
+                    name: 'Uniswap',
+                    symbol: Collaterals.UNI,
+                  },
+                  {
+                    address: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+                    decimals: 18,
+                    name: 'ChainLink Token',
+                    symbol: Collaterals.LINK,
+                  },
+                  {
+                    address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                  },
+                  {
+                    address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+                    decimals: 8,
+                    name: 'Coinbase Wrapped BTC',
+                    symbol: Collaterals.cbBTC,
+                  },
+                  {
+                    address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
+                    decimals: 18,
+                    name: 'tBTC v2',
+                    symbol: Collaterals.tBTC,
+                  },
+            ],
         },
         {
             rewardsAddress: '0x1B0e765F6224C21223AeA2af16c1C46E38885a40',
@@ -54,6 +130,68 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.USDT,
             baseAssetAddress: '0xdAC17F958D2ee523a2206206994597C13D831ec7',
             baseAssetDecimals: 6,
+            collaterals: [
+                {
+                    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+                    decimals: 18,
+                    name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                },
+                {
+                    address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+                    decimals: 8,
+                    name: 'Wrapped BTC',
+                    symbol: Collaterals.WBTC,
+                },
+                {
+                    address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
+                    decimals: 18,
+                    name: 'Uniswap',
+                    symbol: Collaterals.UNI,
+                },
+                {
+                    address: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+                    decimals: 18,
+                    name: 'ChainLink Token',
+                    symbol: Collaterals.LINK,
+                },
+                {
+                    address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+                    decimals: 8,
+                    name: 'Coinbase Wrapped BTC',
+                    symbol: Collaterals.cbBTC,
+                },
+                {
+                    address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
+                    decimals: 18,
+                    name: 'tBTC v2',
+                    symbol: Collaterals.tBTC,
+                },
+                {
+                    address: '0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812',
+                    decimals: 18,
+                    name: 'Wrapped Mountain Protocol USD',
+                    symbol: Collaterals.wUSDM,
+                },
+                {
+                    address: '0xA663B02CF0a4b149d2aD41910CB81e23e1c41c32',
+                    decimals: 18,
+                    name: 'Staked FRAX',
+                    symbol: Collaterals.sFRAX,
+                },
+                {
+                    address: '0xd5F7838F5C461fefF7FE49ea5ebaF7728bB0ADfa',
+                    decimals: 18,
+                    name: 'mETH',
+                    symbol: Collaterals.mETH,
+                }
+            ],
         },
         {
             rewardsAddress: '0x1B0e765F6224C21223AeA2af16c1C46E38885a40',
@@ -63,6 +201,44 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.USDS,
             baseAssetAddress: '0xdC035D45d973E3EC169d2276DDab16f1e407384F',
             baseAssetDecimals: 18,
+            collaterals: [
+                {
+                    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
+                    decimals: 18,
+                    name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                },
+                {
+                    address: '0x4c9EDD5852cd905f086C759E8383e09bff1E68B3',
+                    decimals: 18,
+                    name: 'USDe',
+                    symbol: Collaterals.USDe,
+                },
+                {
+                    address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+                    decimals: 8,
+                    name: 'Coinbase Wrapped BTC',
+                    symbol: Collaterals.cbBTC,
+                },
+                {
+                    address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
+                    decimals: 18,
+                    name: 'tBTC v2',
+                    symbol: Collaterals.tBTC,
+                },
+                {
+                    address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD',
+                    decimals: 18,
+                    name: 'Savings USDS',
+                    symbol: Collaterals.sUSDS,
+                }
+            ]
         },
         {
             rewardsAddress: '0x1B0e765F6224C21223AeA2af16c1C46E38885a40',
@@ -72,6 +248,80 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.WETH,
             baseAssetAddress: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
             baseAssetDecimals: 18,
+            collaterals: [
+                {
+                    address: '0xBe9895146f7AF43049ca1c1AE358B0541Ea49704',
+                    decimals: 18,
+                    name: 'Coinbase Wrapped Staked ETH',
+                    symbol: Collaterals.cbETH
+                },
+                {
+                    address: '0x7f39C581F595B53c5cb19bD0b3f8dA6c935E2Ca0',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0xae78736Cd615f374D3085123A210448E74Fc6393',
+                    decimals: 18,
+                    name: 'Rocket Pool ETH',
+                    symbol: Collaterals.rETH,
+                },
+                {
+                    address: '0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7',
+                    decimals: 18,
+                    name: 'rsETH',
+                    symbol: Collaterals.rsETH,
+                },
+                {
+                    address: '0xCd5fE23C85820F7B72D0926FC9b05b43E359b7ee',
+                    decimals: 18,
+                    name: 'Wrapped eETH',
+                    symbol: Collaterals.weETH,
+                },
+                {
+                    address: '0xf1C9acDc66974dFB6dEcB12aA385b9cD01190E38',
+                    decimals: 18,
+                    name: 'Staked ETH',
+                    symbol: Collaterals.osETH,
+                },
+                {
+                    address: '0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599',
+                    decimals: 8,
+                    name: 'Wrapped BTC',
+                    symbol: Collaterals.WBTC,
+                },
+                {
+                    address: '0xbf5495Efe5DB9ce00f80364C8B423567e58d2110',
+                    decimals: 18,
+                    name: 'Renzo Restaked ETH',
+                    symbol: Collaterals.ezETH,
+                },
+                {
+                    address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+                    decimals: 8,
+                    name: 'Coinbase Wrapped BTC',
+                    symbol: Collaterals.cbBTC,
+                },
+                {
+                    address: '0xFAe103DC9cf190eD75350761e95403b7b8aFa6c0',
+                    decimals: 18,
+                    name: 'rswETH',
+                    symbol: Collaterals.rswETH,
+                },
+                {
+                    address: '0x18084fbA666a33d37592fA2633fD49a74DD93a88',
+                    decimals: 18,
+                    name: 'tBTC v2',
+                    symbol: Collaterals.tBTC,
+                },
+                {
+                    address: '0xA35b1B31Ce002FBF2058D22F30f95D405200A15b',
+                    decimals: 18,
+                    name: 'ETHx',
+                    symbol: Collaterals.ETHx,
+                }
+            ]
         },
         {
             rewardsAddress: '0x1B0e765F6224C21223AeA2af16c1C46E38885a40',
@@ -81,6 +331,20 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.wstETH,
             baseAssetAddress: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0',
             baseAssetDecimals: 18,
+            collaterals: [
+                {
+                    address: '0xA1290d69c65A6Fe4DF752f95823fae25cB99e5A7',
+                    decimals: 18,
+                    name: 'rsETH',
+                    symbol: Collaterals.rsETH,
+                },
+                {
+                    address: '0xbf5495Efe5DB9ce00f80364C8B423567e58d2110',
+                    decimals: 18,
+                    name: 'Renzo Restaked ETH',
+                    symbol: Collaterals.ezETH,
+                }
+            ]
         },
     ],
     [ChainId.ARBITRUM]: [
@@ -92,6 +356,32 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets['USDC.e'],
             baseAssetAddress: '0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8',
             baseAssetDecimals: 6,
+            collaterals: [
+                {
+                    address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+                    decimals: 18,
+                    name: 'Arbitrum',
+                    symbol: Collaterals.ARB,
+                },
+                {
+                    address: '0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a',
+                    decimals: 18,
+                    name: 'GMX',
+                    symbol: Collaterals.GMX,
+                },
+                {
+                    address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+                    decimals: 18,
+                    name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                },
+                {
+                    address: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
+                    decimals: 8,
+                    name: 'Wrapped BTC',
+                    symbol: Collaterals.WBTC,
+                }
+            ]
         },
         {
             rewardsAddress: '0x88730d254A2f7e6AC8388c3198aFd694bA9f7fae',
@@ -101,6 +391,50 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.USDC,
             baseAssetAddress: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
             baseAssetDecimals: 6,
+            collaterals: [
+                {
+                    address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+                    decimals: 18,
+                    name: 'Arbitrum',
+                    symbol: Collaterals.ARB,
+                },
+                {
+                    address: '0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a',
+                    decimals: 18,
+                    name: 'GMX',
+                    symbol: Collaterals.GMX,
+                },
+                {
+                    address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+                    decimals: 18,
+                    name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                },
+                {
+                    address: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
+                    decimals: 8,
+                    name: 'Wrapped BTC',
+                    symbol: Collaterals.WBTC,
+                },
+                {
+                    address: '0x5979D7b546E38E414F7E9822514be443A4800529',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0x2416092f143378750bb29b79eD961ab195CcEea5',
+                    decimals: 18,
+                    name: 'Renzo Restaked ETH',
+                    symbol: Collaterals.ezETH,
+                },
+                {
+                    address: '0x57F5E098CaD7A3D1Eed53991D4d66C45C9AF7812',
+                    decimals: 18,
+                    name: 'Wrapped Mountain Protocol USD',
+                    symbol: Collaterals.wUSDM,
+                }
+            ]
         },
         {
             rewardsAddress: '0x88730d254A2f7e6AC8388c3198aFd694bA9f7fae',
@@ -110,6 +444,56 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.WETH,
             baseAssetAddress: '0x82af49447d8a07e3bd95bd0d56f35241523fbab1',
             baseAssetDecimals: 18,
+            collaterals: [
+                {
+                    address: '0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe',
+                    decimals: 18,
+                    name: 'Wrapped eETH',
+                    symbol: Collaterals.weETH,
+                },
+                {
+                    address: '0xEC70Dcb4A1EFa46b8F2D97C310C9c4790ba5ffA8',
+                    decimals: 18,
+                    name: 'Rocket Pool ETH',
+                    symbol: Collaterals.rETH,
+                },
+                {
+                    address: '0x5979D7b546E38E414F7E9822514be443A4800529',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
+                    decimals: 8,
+                    name: 'Wrapped BTC',
+                    symbol: Collaterals.WBTC,
+                },
+                {
+                    address: '0x4186BFC76E2E237523CBC30FD220FE055156b41F',
+                    decimals: 18,
+                    name: 'KelpDao Restaked ETH',
+                    symbol: Collaterals.rsETH,
+                },
+                {
+                    address: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
+                    decimals: 6,
+                    name: 'USD₮0',
+                    symbol: Collaterals.USDT,
+                },
+                {
+                    address: '0xaf88d065e77c8cC2239327C5EDb3A432268e5831',
+                    decimals: 6,
+                    name: 'USD Coin',
+                    symbol: Collaterals.USDC,
+                },
+                {
+                    address: '0x2416092f143378750bb29b79eD961ab195CcEea5',
+                    decimals: 18,
+                    name: 'Renzo Restaked ETH',
+                    symbol: Collaterals.ezETH,
+                }
+            ]
         },
         {
             rewardsAddress: '0x88730d254A2f7e6AC8388c3198aFd694bA9f7fae',
@@ -119,6 +503,38 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.USDT,
             baseAssetAddress: '0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9',
             baseAssetDecimals: 6,
+            collaterals: [
+                {
+                    address: '0x912CE59144191C1204E64559FE8253a0e49E6548',
+                    decimals: 18,
+                    name: 'Arbitrum',
+                    symbol: Collaterals.ARB,
+                },
+                {
+                    address: '0x82aF49447D8a07e3bd95BD0d56f35241523fBab1',
+                    decimals: 18,
+                    name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                },
+                {
+                    address: '0x5979D7b546E38E414F7E9822514be443A4800529',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f',
+                    decimals: 8,
+                    name: 'Wrapped BTC',
+                    symbol: Collaterals.WBTC,
+                },
+                {
+                    address: '0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a',
+                    decimals: 18,
+                    name: 'GMX',
+                    symbol: Collaterals.GMX,
+                }
+            ]
         },
     ],
     [ChainId.BASE]: [
@@ -130,6 +546,32 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.USDC,
             baseAssetAddress: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
             baseAssetDecimals: 6,
+            collaterals: [
+                {
+                  address: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
+                    decimals: 18,
+                    name: 'Coinbase Wrapped Staked ETH',
+                    symbol: Collaterals.cbETH,
+                },
+                {
+                  address: '0x4200000000000000000000000000000000000006',
+                  decimals: 18,
+                  name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                },
+                {
+                    address: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+                    decimals: 8,
+                    name: 'Coinbase Wrapped BTC',
+                    symbol: Collaterals.cbBTC,
+                }
+            ]
         },
         {
             rewardsAddress: '0x123964802e6ABabBE1Bc9547D72Ef1B69B00A6b1',
@@ -139,6 +581,20 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.USDbC,
             baseAssetAddress: '0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA',
             baseAssetDecimals: 6,
+            collaterals: [
+                {
+                    address: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
+                    decimals: 18,
+                    name: 'Coinbase Wrapped Staked ETH',
+                    symbol: Collaterals.cbETH,
+                },
+                {
+                    address: '0x4200000000000000000000000000000000000006',
+                    decimals: 18,
+                    name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                }
+            ]
         },
         {
             rewardsAddress: '0x123964802e6ABabBE1Bc9547D72Ef1B69B00A6b1',
@@ -148,6 +604,50 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.WETH,
             baseAssetAddress: '0x4200000000000000000000000000000000000006',
             baseAssetDecimals: 18,
+            collaterals: [
+                {
+                    address: '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22',
+                    decimals: 18,
+                    name: 'Coinbase Wrapped Staked ETH',
+                    symbol: Collaterals.cbETH,
+                },
+                {
+                    address: '0x2416092f143378750bb29b79eD961ab195CcEea5',
+                    decimals: 18,
+                    name: 'Renzo Restaked ETH',
+                    symbol: Collaterals.ezETH,
+                },
+                {
+                    address: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+                    decimals: 6,
+                    name: 'USD Coin',
+                    symbol: Collaterals.USDC,
+                },
+                {
+                    address: '0x04C0599Ae5A44757c0af6F9eC3b93da8976c150A',
+                    decimals: 18,
+                    name: 'Wrapped eETH',
+                    symbol: Collaterals.weETH,
+                },
+                {
+                    address: '0xEDfa23602D0EC14714057867A78d01e94176BEA0',
+                    decimals: 18,
+                    name: 'rsETHWrapper',
+                    symbol: Collaterals.rsETH,
+                },
+                {
+                    address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+                    decimals: 8,
+                    name: 'Coinbase Wrapped BTC',
+                    symbol: Collaterals.cbBTC,
+                }
+            ]
         },
         {
             rewardsAddress: '0x123964802e6ABabBE1Bc9547D72Ef1B69B00A6b1',
@@ -157,6 +657,32 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
             baseAsset: MarketBaseAssets.AERO,
             baseAssetAddress: '0x940181a94A35A4569E4529A3CDfB74e38FD98631',
             baseAssetDecimals: 18,
+            collaterals: [
+                {
+                    address: '0x4200000000000000000000000000000000000006',
+                    decimals: 18,
+                    name: 'Wrapped Ether',
+                    symbol: Collaterals.WETH,
+                },
+                {
+                    address: '0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913',
+                    decimals: 6,
+                    name: 'USD Coin',
+                    symbol: Collaterals.USDC,
+                },
+                {
+                    address: '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452',
+                    decimals: 18,
+                    name: 'Wrapped liquid staked Ether 2.0',
+                    symbol: Collaterals.wstETH,
+                },
+                {
+                    address: '0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf',
+                    decimals: 8,
+                    name: 'Coinbase Wrapped BTC',
+                    symbol: Collaterals.cbBTC,
+                }
+            ]
         },
     ],
 };
@@ -164,29 +690,6 @@ export const MARKETS: { [chain in SupprotedChainsType]: MarketConfig[] } = {
 export const COLLATERAL_DECIMALS = 18;
 
 export const COMPOUND_TOKEN_DECIMALS = 18;
-
-export const PRICE_FEEDS = {
-    [ChainId.ETHEREUM]: {
-        [MarketBaseAssets.COMP]: '0xdbd020caef83efd542f4de03e3cf0c28a4428bd5',
-        [MarketBaseAssets.USDC]: '0x8fffffd4afb6115b954bd326cbe7b4ba576818f6',
-        [MarketBaseAssets.USDT]: '0x3e7d1eab13ad0104d2750b8863b489d65364e32d',
-        [MarketBaseAssets.USDS]: '0xff30586cd0f29ed462364c7e81375fc0c71219b1',
-        [MarketBaseAssets.WETH]: '0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419',
-        [MarketBaseAssets.wstETH]: '0x023ee795361b28cdbb94e302983578486a0a5f1b',
-    },
-    [ChainId.ARBITRUM]: {
-        [MarketBaseAssets['USDC.e']]: '0x50834f3163758fcc1df9973b6e91f0f0f0434ad3',
-        [MarketBaseAssets.USDC]: '0x50834f3163758fcc1df9973b6e91f0f0f0434ad3',
-        [MarketBaseAssets.WETH]: '0x639fe6ab55c921f74e7fac1ee960c0b6293ba612',
-        [MarketBaseAssets.USDT]: '0x3f3f5df88dc9f13eac63df89ec16ef6e7e25dde7',
-    },
-    [ChainId.BASE]: {
-        [MarketBaseAssets.USDC]: '0x7e860098f58bbfc8648a4311b374b1d669a2bc6b',
-        [MarketBaseAssets.WETH]: '0x2c7118c4c88b9841fcf839074c26ae8f035f2921',
-        [MarketBaseAssets.AERO]: '0x4ec5970fc728c5f65ba413992cd5ff6fd70fcff0',
-        [MarketBaseAssets.USDbC]: '0x7e860098f58bbfc8648a4311b374b1d669a2bc6b',
-    },
-};
 
 export const getMarketConfigByChainAndTokenAddress = (chainId: SupprotedChainsType, tokenAddress: Address): MarketConfig => {
     if (NATIVE_ADDRESS === tokenAddress) {
@@ -243,68 +746,5 @@ export const validateInputAndGetData = ({
         success: true,
         marketConfig,
         chainId,
-    };
-};
-
-export const getTokenPrice = async (chainId: SupprotedChainsType, baseAsset: MarketBaseAssets, provider: PublicClient): Promise<bigint> => {
-    const decimals = await provider.readContract({
-        address: PRICE_FEEDS[chainId][baseAsset],
-        abi: priceFeedAbi,
-        functionName: 'decimals',
-    }) as bigint;
-    const latestRoundData = await provider.readContract({
-        address: PRICE_FEEDS[chainId][baseAsset],
-        abi: priceFeedAbi,
-        functionName: 'latestRoundData',
-    }) as [bigint, bigint, bigint, bigint, bigint, bigint];
-    return BigInt(latestRoundData[1]) / BigInt(10n ** BigInt(decimals));
-};
-
-export const getUserMarketInteractionsSum = async (account: Address, tokenAddress: Address, provider: PublicClient): Promise<{
-    collateralSupplySum: bigint;
-    collateralWithdrawSum: bigint;
-    supplySum: bigint;
-    withdrawSum: bigint;
-}> => {
-    const transferEvents = await provider.getContractEvents({
-        address: tokenAddress,
-        abi: erc20Abi,
-        eventName: 'Transfer',
-    });
-    const supplyCollateralEvents = await provider.getContractEvents({
-        address: tokenAddress,
-        abi: cometAbi,
-        eventName: 'SupplyCollateral',
-    });
-    const withdrawCollateralEvents = await provider.getContractEvents({
-        address: tokenAddress,
-        abi: cometAbi,
-        eventName: 'WithdrawCollateral',
-    });
-    const transferData = transferEvents.reduce((acc, event) => {
-        if (event.args.to?.toString() === account) {
-            acc.supplySum += event.args.value ?? 0n;
-        } else if (event.args.from?.toString() === account) {
-            acc.withdrawSum += event.args.value ?? 0n;
-        }
-        return acc;
-    }, { supplySum: 0n, withdrawSum: 0n });
-    const collateralSupplySum = supplyCollateralEvents.reduce((acc, event) => {
-        if (event.args.dst?.toString() === account) {
-            acc += event.args.amount ?? 0n;
-        }
-        return acc;
-    }, 0n);
-    const collateralWithdrawSum = withdrawCollateralEvents.reduce((acc, event) => {
-        if (event.args.src?.toString() === account) {
-            acc += event.args.amount ?? 0n;
-        }
-        return acc;
-    }, 0n);
-
-    return {
-        collateralSupplySum,
-        collateralWithdrawSum,
-        ...transferData,
     };
 };

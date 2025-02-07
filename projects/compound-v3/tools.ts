@@ -20,11 +20,38 @@ const baseProps = [
     },
 ];
 
+export const claimRewardsProps = [
+    {
+        name: 'chainName',
+        type: 'string',
+        enum: supportedChains.map(getChainName),
+        description: 'Chain name where to execute the transaction',
+    },
+    {
+        name: 'account',
+        type: 'string',
+        description: 'Account address that will execute the transaction',
+    },
+];
+
 const lendProps = [
     {
         name: 'lendAmount',
         type: 'string',
         description: 'Amount of tokens to lend in decimal format',
+    },
+];
+
+export const supplyCollateralProps = [
+    {
+        name: 'supplyAmount',
+        type: 'string',
+        description: 'Amount of tokens to supply in decimal format',
+    },
+    {
+        name: 'collateralAddress',
+        type: 'string',
+        description: 'Address of the collateral to supply',
     },
 ];
 
@@ -49,6 +76,11 @@ export const withdrawCollateralProps = [
         name: 'withdrawAmount',
         type: 'string',
         description: 'Amount of tokens to withdraw in decimal format',
+    },
+    {
+        name: 'collateralAddress',
+        type: 'string',
+        description: 'Address of the collateral to withdraw',
     },
 ];
 
@@ -96,13 +128,13 @@ export const tools: AiTool[] = [
         name: 'getPosition',
         description: 'Lend assets into the protocol',
         required: ['chainName', 'account', 'marketAddress'],
-        props: [...baseProps.slice(2), ...marketAddressProps],
+        props: [...baseProps.slice(0, 2), ...marketAddressProps],
     },
     {
         name: 'getAllPositionsOnChain',
         description: 'Lend assets into the protocol',
         required: ['chainName', 'account'],
-        props: [...baseProps.slice(2)],
+        props: [...baseProps.slice(0, 2)],
     },
     {
         name: 'borrow',
@@ -113,31 +145,43 @@ export const tools: AiTool[] = [
     {
         name: 'claimRewards',
         description: 'Claim rewards from the protocol',
+        required: ['chainName', 'account'],
+        props: [...claimRewardsProps],
+    },
+    {
+        name: 'getClaimedRewardsPerMarket',
+        description: 'Get claimed rewards from a specific market',
         required: ['chainName', 'account', 'tokenAddress'],
         props: [...baseProps],
     },
     {
         name: 'getClaimedRewards',
-        description: 'Get claimed rewards from the protocol',
-        required: ['chainName', 'account', 'tokenAddress'],
+        description: 'Get claimed rewards from all markets',
+        required: ['chainName', 'account'],
+        props: [...baseProps.slice(0, 2)],
+    },
+    {
+        name: 'getOwedRewardsPerMarket',
+        description: 'Get owed rewards from the protocol',
+        required: ['chainName', 'account'],
         props: [...baseProps],
     },
     {
         name: 'getOwedRewards',
         description: 'Get owed rewards from the protocol',
-        required: ['chainName', 'account', 'tokenAddress'],
-        props: [...baseProps],
+        required: ['chainName', 'account'],
+        props: [...baseProps.slice(0, 2)],
     },
     {
-        name: 'lendCollateral',
-        description: 'Lend collateral to the protocol',
-        required: ['chainName', 'account', 'tokenAddress', 'marketAddress', 'lendAmount'],
-        props: [...baseProps, ...marketAddressProps, ...lendProps],
+        name: 'supplyCollateral',
+        description: 'Supply collateral to the protocol',
+        required: ['chainName', 'account', 'tokenAddress', 'collateralAddress', 'supplyAmount'],
+        props: [...baseProps, ...supplyCollateralProps],
     },
     {
         name: 'withdrawCollateral',
         description: 'Withdraw collateral from the protocol',
-        required: ['chainName', 'account', 'tokenAddress', 'withdrawAmount'],
+        required: ['chainName', 'account', 'tokenAddress', 'collateralAddress', 'withdrawAmount'],
         props: [...baseProps, ...withdrawCollateralProps],
     },
     {
@@ -153,14 +197,8 @@ export const tools: AiTool[] = [
         props: [...baseProps, ...repayWholeDeptProps],
     },
     {
-        name: 'getDeptAmount',
+        name: 'getDebtAmount',
         description: 'Get the current debt amount for a user in a Compound market',
-        required: ['chainName', 'account', 'tokenAddress'],
-        props: [...baseProps],
-    },
-    {
-        name: 'getTotalEarn',
-        description: 'Get the total earnings for a user in a Compound market',
         required: ['chainName', 'account', 'tokenAddress'],
         props: [...baseProps],
     },

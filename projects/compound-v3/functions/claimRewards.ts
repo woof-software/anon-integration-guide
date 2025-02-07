@@ -1,22 +1,25 @@
-import { encodeFunctionData } from 'viem';
+import { Address, encodeFunctionData } from 'viem';
 import { FunctionReturn, FunctionOptions, toResult, TransactionParams } from '@heyanon/sdk';
-import { BaseProps, validateInputAndGetData } from '../constants';
+import { MARKETS, validateInputAndGetData } from '../constants';
 import { rewardsAbi } from '../abis';
 
-interface Props extends BaseProps {}
+interface Props {
+    chainName: string;
+    account: Address;
+}
 
 /**
- * Claims available COMP rewards from a Compound V3 market
- * @param param0 - chainName - name of the chain, account - user's wallet address, tokenAddress - the address of the market's underlying token
+ * Claims available COMP rewards from a Compound V3 market. One reward contract per market.
+ * @param param0 - chainName - name of the chain, account - user's wallet address.
  * @param param1 - SDK tools
  * @docs https://docs.compound.finance/protocol-rewards/#claim-rewards
  * @returns {Promise<FunctionReturn>} Result object containing success/error message
  */
 export async function claimRewards(
-    { chainName, account, tokenAddress }: Props,
+    { chainName, account }: Props,
     { getProvider, notify, sendTransactions }: FunctionOptions
 ): Promise<FunctionReturn> {
-    const result = validateInputAndGetData({ chainName, account, tokenAddress });
+    const result = validateInputAndGetData({ chainName, account, tokenAddress: MARKETS[chainName].rewardsAddress });
     if (!result.success) return toResult(result.error, true);
 
     const { marketConfig, chainId } = result;

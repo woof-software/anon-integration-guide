@@ -1,9 +1,10 @@
-import { encodeFunctionData, parseUnits } from 'viem';
+import { Address, encodeFunctionData, parseUnits } from 'viem';
 import { FunctionReturn, FunctionOptions, TransactionParams, toResult } from '@heyanon/sdk';
 import { BaseProps, isNativeToken, nativeTokensAddress, validateInputAndGetData } from '../constants';
 import { cometAbi, wethAbi } from '../abis';
 
 interface Props extends BaseProps {
+    collateralAddress: Address;
     withdrawAmount: string;
 }
 
@@ -15,7 +16,7 @@ interface Props extends BaseProps {
  * @returns {Promise<FunctionReturn>} Result object containing success/error message
  */
 export async function withdrawCollateral(
-    { chainName, account, tokenAddress, withdrawAmount }: Props,
+    { chainName, account, tokenAddress, collateralAddress, withdrawAmount }: Props,
     { sendTransactions, notify, getProvider }: FunctionOptions
 ): Promise<FunctionReturn> {
     const result = validateInputAndGetData({ chainName, account, tokenAddress });
@@ -37,13 +38,13 @@ export async function withdrawCollateral(
             address: cometAddress,
             abi: cometAbi,
             functionName: 'userCollateral',
-            args: [account, tokenAddress],
+            args: [account, collateralAddress],
         });
         // throw error if amount withdrawn is greater than amount supplied
-        if (withdrawAmountInWei > collateralBalance[0]) return toResult(`Insufficient balance. You have supplied ${collateralBalance[0]} ${tokenAddress}, while trying to withdraw ${withdrawAmount}.`, true);
+        if (withdrawAmountInWei > collateralBalance[0]) return toResult(`Insufficient balance. You have supplied ${collateralBalance[0]} ${collateralAddress}, while trying to withdraw ${withdrawAmount}.`, true);
 
         // For native token withdrawals, we need to unwrap after withdrawal
-        if (isNativeToken(tokenAddress)) {
+        if (isNativeToken(collateralAddress)) {
             const wrappedAddress = nativeTokensAddress[chainId];
             if (!wrappedAddress) {
                 return toResult(`Wrapped native address not found for chain ${chainId}`, true);
@@ -77,7 +78,7 @@ export async function withdrawCollateral(
                 data: encodeFunctionData({
                     abi: cometAbi,
                     functionName: 'withdraw',
-                    args: [tokenAddress, withdrawAmountInWei],
+                    args: [collateralAddress, withdrawAmountInWei],
                 }),
             };
             transactions.push(withdrawTx);
