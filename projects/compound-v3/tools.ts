@@ -202,4 +202,16 @@ export const tools: AiTool[] = [
         required: ['chainName', 'account', 'tokenAddress'],
         props: [...baseProps],
     },
+    {
+        name: 'getHealthFactorPerMarket',
+        description: 'Get the health factor for a user in a Compound market',
+        required: ['chainName', 'account', 'tokenAddress'],
+        props: [...baseProps],
+    },
+    {
+        name: 'getHealthFactor',
+        description: 'Get the health factor for a user in a Compound market',
+        required: ['chainName', 'account'],
+        props: [...baseProps.slice(0, 2)],
+    },
 ];

@@ -1,6 +1,6 @@
 import { Address, encodeFunctionData, parseUnits } from 'viem';
 import { FunctionReturn, FunctionOptions, TransactionParams, toResult } from '@heyanon/sdk';
-import { BaseProps, isNativeToken, nativeTokensAddress, validateInputAndGetData } from '../constants';
+import { BaseProps, getTokenPrice, isNativeToken, nativeTokensAddress, validateInputAndGetData } from '../constants';
 import { cometAbi, wethAbi } from '../abis';
 
 interface Props extends BaseProps {
@@ -42,6 +42,44 @@ export async function withdrawCollateral(
         });
         // throw error if amount withdrawn is greater than amount supplied
         if (withdrawAmountInWei > collateralBalance[0]) return toResult(`Insufficient balance. You have supplied ${collateralBalance[0]} ${collateralAddress}, while trying to withdraw ${withdrawAmount}.`, true);
+
+        // Get the borrow value of the user
+        const borrowBalance = await provider.readContract({
+            address: cometAddress,
+            abi: cometAbi,
+            functionName: 'borrowBalanceOf',
+            args: [account],
+        });
+        const tokenPrice = await getTokenPrice(provider, marketConfig.priceFeedAddress);
+        const borrowValue = borrowBalance * tokenPrice;
+
+        // Get the collaterals value of the user
+        let collateralValue = 0n;
+        for (const collateral of marketConfig.collaterals) {
+            const [collateralBalance] = await provider.readContract({
+                address: cometAddress,
+                abi: cometAbi,
+                functionName: 'userCollateral',
+                args: [account, collateral.address],
+            });
+            if (collateralBalance === 0n) continue;
+            const collateralPrice = await getTokenPrice(provider, collateral.priceFeedAddress);
+
+            const { borrowCollateralFactor } = await provider.readContract({
+                address: cometAddress,
+                abi: cometAbi,
+                functionName: 'getAssetInfoByAddress',
+                args: [collateral.address],
+            });
+            collateralValue += (collateralBalance * collateralPrice) * borrowCollateralFactor;
+        }
+
+        const healthFactor = collateralValue / borrowValue;
+
+        // if user have a position and HF < 1, then protocol won't allow you to make a withdrawal
+        if (healthFactor < 1) {
+            return toResult(`Health factor is too low. You have a health factor of ${healthFactor}.`, true);
+        }
 
         // For native token withdrawals, we need to unwrap after withdrawal
         if (isNativeToken(collateralAddress)) {
